@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepare": "husky",
+    "precommit": "npm run lint-fix",
+    "prepush": "npm run lint"
   },
   "dependencies": {
     "next": "16.1.6",
@@ -14,12 +17,19 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@stylistic/stylelint-plugin": "^5.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "husky": "^9.1.7",
+    "stylelint-config-recess-order": "^7.6.1",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-config-tailwindcss": "^1.0.1",
+    "stylelint-scss": "^7.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

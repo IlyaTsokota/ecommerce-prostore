@@ -1,0 +1,6 @@
+{
+    "stylelint.enable": true,
+    "stylelint.validate": ["css", "scss", "sass", "postcss", "tailwindcss"],
+    "stylelint.configFile": "stylelint.config.cjs",
+    "stylelint.packageManager": "npm"
+}

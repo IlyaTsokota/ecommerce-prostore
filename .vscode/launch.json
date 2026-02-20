@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Next.js: dev (inspect)",
+            "command": "npm run debug",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Next.js: client (Chrome)",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Next.js: full stack",
+            "configurations": ["Next.js: dev (inspect)", "Next.js: client (Chrome)"]
+        }
+    ]
+}
