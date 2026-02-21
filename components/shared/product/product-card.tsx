@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import sampleData from "@/db/sample-data";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 import ProductPrice from "./product-price";
+import { Product } from "@/features/product/product.types";
 
 interface ProductCardProps {
-    product: (typeof sampleData)["products"][number];
+    product: Product;
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product }) => {

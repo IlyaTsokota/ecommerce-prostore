@@ -1,9 +1,9 @@
-import sampleData from "@/db/sample-data";
 import { FC } from "react";
 import ProductCard from "./product-card";
+import { Product } from "@/features/product/product.types";
 
 interface ProductListProps {
-    data: (typeof sampleData)["products"]; // Replace with your actual product type
+    data: Product[];
     title: string;
 }
 
