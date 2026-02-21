@@ -15,3 +15,13 @@ export async function getLatestProducts(): Promise<Product[]> {
 
     return convertToPlainObject(data);
 }
+
+export async function getProductBySlug(slug: string): Promise<Product> {
+    const data = await prisma.product.findUnique({
+        where: {
+            slug,
+        },
+    });
+
+    return convertToPlainObject(data);
+}
