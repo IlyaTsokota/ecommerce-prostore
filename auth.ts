@@ -4,7 +4,7 @@ import prisma from "./db/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt-ts-edge";
 
-export const { signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     pages: {
         signIn: "/sing-in",

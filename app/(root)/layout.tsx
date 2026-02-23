@@ -1,5 +1,5 @@
-import Footer from "../../components/shared/footer/footer";
-import Header from "../../components/shared/header/header";
+import Footer from "@/components/shared/footer/footer";
+import Header from "@/components/shared/header/header";
 
 export default function RootLayout({
     children,

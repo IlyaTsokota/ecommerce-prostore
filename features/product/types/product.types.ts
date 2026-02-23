@@ -1,5 +1,9 @@
 import z from "zod";
-import { CreateProductSchema, ResponseProductSchema, UpdateProductSchema } from "./product.schema";
+import {
+    CreateProductSchema,
+    ResponseProductSchema,
+    UpdateProductSchema,
+} from "../schemas/product.schema";
 
 export type Product = z.infer<typeof ResponseProductSchema>;
 

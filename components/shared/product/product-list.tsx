@@ -1,6 +1,6 @@
 import { FC } from "react";
 import ProductCard from "./product-card";
-import { Product } from "@/features/product/product.types";
+import { Product } from "@/features/product/types/product.types";
 
 interface ProductListProps {
     data: Product[];
