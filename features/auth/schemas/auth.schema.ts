@@ -1,9 +1,17 @@
+import { PasswordSchema } from "@/features/base/schemas/base.schema";
 import * as z from "zod";
 
-export const signInSchema = z.object({
+const BaseAuthSchema = z.object({
     email: z.email("Invalid email").min(1, "Email is required"),
-    password: z
-        .string()
-        .min(1, "Password is required")
-        .min(6, "Password must be more than 6 characters"),
+    password: PasswordSchema,
+});
+
+export const SignInFormSchema = BaseAuthSchema;
+
+export const SignUpFormSchema = BaseAuthSchema.extend({
+    name: z.string().min(3, "Name must be at least than 3 characters"),
+    confirmPassword: PasswordSchema,
+}).refine((data) => data.password === data.confirmPassword, {
+    error: "Password don't match",
+    path: ["confirmPassword"],
 });

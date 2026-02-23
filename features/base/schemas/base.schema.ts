@@ -7,3 +7,5 @@ export const CurrencySchema = z
         (value) => /^\d+(\.\d{2})?$/.test(formatNumberWithDecimal(Number(value))),
         "Price must have exactly two decimal places",
     );
+
+export const PasswordSchema = z.string().min(6, "Password must be at least than 6 characters");

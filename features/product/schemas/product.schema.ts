@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { CurrencySchema } from "../../base/schemas/base.schema";
 
-export const BaseProductSchema = z.object({
+const BaseProductSchema = z.object({
     name: z.string().min(3, "Name must be at least 3 characters"),
     slug: z.string().min(3, "Slug must be at least 3 characters"),
     category: z.string().min(3, "Category must be at least 3 characters"),

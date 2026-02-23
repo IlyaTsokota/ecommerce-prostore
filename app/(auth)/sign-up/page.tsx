@@ -3,20 +3,20 @@ import { APP_NAME } from "@/lib/constants";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import CredentialsSignInForm from "./sign-in-form";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { FC } from "react";
+import SignUpForm from "./sign-up-form";
 
 export const metadata: Metadata = {
-    title: "Sign In",
+    title: "Sign Up",
 };
 
-interface SignInPageProps {
+interface SignUpPageProps {
     searchParams: Promise<{ callbackUrl: string }>;
 }
 
-const SignInPage: FC<SignInPageProps> = async ({ searchParams }) => {
+const SignUpPage: FC<SignUpPageProps> = async ({ searchParams }) => {
     const { callbackUrl } = await searchParams;
     const session = await auth();
 
@@ -37,17 +37,17 @@ const SignInPage: FC<SignInPageProps> = async ({ searchParams }) => {
                             priority
                         />
                     </Link>
-                    <CardTitle className="text-center">Sign In</CardTitle>
+                    <CardTitle className="text-center">Create Account</CardTitle>
                     <CardDescription className="text-center">
-                        Sign in to your account
+                        Enter you information below to sign-up
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <CredentialsSignInForm />
+                    <SignUpForm />
                 </CardContent>
             </Card>
         </div>
     );
 };
 
-export default SignInPage;
+export default SignUpPage;
