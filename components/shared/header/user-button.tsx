@@ -7,7 +7,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOutUser } from "@/features/auth/actions/auth.actions";
+import { signOutUser } from "@/lib/features/auth/actions/auth.actions";
 import { UserIcon } from "lucide-react";
 import Link from "next/link";
 

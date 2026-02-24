@@ -1,4 +1,4 @@
-import { PasswordSchema } from "@/features/base/schemas/base.schema";
+import { PasswordSchema } from "@/lib/features/base/schemas/base.schema";
 import * as z from "zod";
 
 const BaseAuthSchema = z.object({

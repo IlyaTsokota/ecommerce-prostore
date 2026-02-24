@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 import ProductPrice from "./product-price";
-import { Product } from "@/features/product/types/product.types";
+import { Product } from "@/lib/features/product/types/product.types";
 
 interface ProductCardProps {
     product: Product;
