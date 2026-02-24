@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
+    trustHost: true,
     pages: {
         signIn: "/sing-in",
         error: "/sign-in",

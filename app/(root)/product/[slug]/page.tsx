@@ -3,12 +3,23 @@ import ProductImages from "@/components/shared/product/product-images";
 import ProductPrice from "@/components/shared/product/product-price";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getMyCart } from "@/lib/features/cart/actions/cart.actions";
 import { getProductBySlug } from "@/lib/features/product/actions/product.actions";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FC } from "react";
 
 interface ProductDetailsPageProps {
     params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ProductDetailsPageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const product = await getProductBySlug(slug);
+
+    return {
+        title: product?.name ?? "Product not found",
+    };
 }
 
 const ProductDetailsPage: FC<ProductDetailsPageProps> = async ({ params }) => {
@@ -18,6 +29,8 @@ const ProductDetailsPage: FC<ProductDetailsPageProps> = async ({ params }) => {
     if (!product) {
         notFound();
     }
+
+    const cart = await getMyCart();
 
     return (
         <>
@@ -68,6 +81,7 @@ const ProductDetailsPage: FC<ProductDetailsPageProps> = async ({ params }) => {
                                 {product.stock > 0 && (
                                     <div className="flex-center">
                                         <AddToCart
+                                            cart={cart}
                                             item={{
                                                 name: product.name,
                                                 price: product.price,

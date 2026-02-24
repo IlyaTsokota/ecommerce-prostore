@@ -4,6 +4,7 @@ import { LATEST_PRODUCTS_LIMIT } from "../../../constants";
 import prisma from "../../../../db/prisma";
 import { Product } from "@/lib/features/product/types/product.types";
 import { convertToPlainObject } from "../../../utils";
+import { cache } from "react";
 
 export async function getLatestProducts(): Promise<Product[]> {
     const data = await prisma.product.findMany({
@@ -16,7 +17,9 @@ export async function getLatestProducts(): Promise<Product[]> {
     return convertToPlainObject(data);
 }
 
-export async function getProductBySlug(slug: string): Promise<Product> {
+export const getProductBySlug = cache(async (slug: string): Promise<Product> => {
+    console.log("get slug");
+
     const data = await prisma.product.findUnique({
         where: {
             slug,
@@ -24,4 +27,4 @@ export async function getProductBySlug(slug: string): Promise<Product> {
     });
 
     return convertToPlainObject(data);
-}
+});
