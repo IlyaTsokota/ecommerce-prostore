@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import prisma from "./db/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt-ts-edge";
+import { NextResponse } from "next/server";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -63,7 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session;
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async jwt({ user, token, trigger, session }: any) {
+        async jwt({ user, token }: any) {
             if (user) {
                 token.role = user.role;
 
@@ -78,6 +79,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
 
             return token;
+        },
+        authorized({ request }) {
+            if (!request.cookies.get("sessionCartId")) {
+                const sessionCartId = crypto.randomUUID();
+                const newRequestHeaders = new Headers(request.headers);
+                const response = NextResponse.next({ request: { headers: newRequestHeaders } });
+
+                response.cookies.set("sessionCartId", sessionCartId);
+
+                return response;
+            } else {
+                return true;
+            }
         },
     },
 });

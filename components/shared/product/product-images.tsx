@@ -19,6 +19,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
                 width={1000}
                 height={1000}
                 className="min-h-75 object-center object-cover"
+                loading="eager"
             />
             <div className="flex">
                 {images.map((image, index) => (
@@ -35,6 +36,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
                             width={100}
                             height={100}
                             className="object-center object-cover"
+                            loading="eager"
                         />
                     </div>
                 ))}
