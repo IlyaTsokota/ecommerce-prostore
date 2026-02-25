@@ -1,6 +1,7 @@
+"use server";
+
 import prisma from "@/db/prisma";
 import { ShippingAddress } from "../../cart/types/cart.types";
-import { success } from "zod";
 import { formatError } from "@/lib/utils";
 import { auth } from "@/auth";
 import { ShippingAddressSchema } from "../../cart/schemas/cart.schemas";
