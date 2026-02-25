@@ -4,12 +4,13 @@ import prisma from "./db/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt-ts-edge";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     trustHost: true,
     pages: {
-        signIn: "/sing-in",
+        signIn: "/sign-in",
         error: "/sign-in",
     },
     session: {
@@ -65,8 +66,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session;
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async jwt({ user, token }: any) {
+        async jwt({ user, token, trigger, session }: any) {
             if (user) {
+                token.id = user.id;
                 token.role = user.role;
 
                 if (user.name === "NO_NAME") {
@@ -77,11 +79,51 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         data: { name: token.name },
                     });
                 }
+
+                if (trigger === "signIn" || trigger === "signUp") {
+                    const cookiesObject = await cookies();
+                    const sessionCartId = cookiesObject.get("sessionCartId")?.value;
+
+                    if (sessionCartId) {
+                        const sessionCart = await prisma.cart.findFirst({
+                            where: { sessionCartId },
+                        });
+
+                        if (sessionCart) {
+                            await prisma.cart.deleteMany({ where: { userId: user.id } });
+
+                            await prisma.cart.update({
+                                where: { id: sessionCart.id },
+                                data: { userId: user.id },
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (session?.user.name && trigger === "update") {
+                token.name = session.user.name;
             }
 
             return token;
         },
-        authorized({ request }) {
+        authorized({ request, auth }) {
+            const protectedPaths = [
+                /\/shipping-address/,
+                /\/payment-method/,
+                /\/place-order/,
+                /\/profile/,
+                /\/user\/(.*)/,
+                /\/order\/(.*)/,
+                /\/admin/,
+            ];
+
+            const { pathname } = request.nextUrl;
+
+            if (!auth && protectedPaths.some((path) => path.test(pathname))) {
+                return false;
+            }
+
             if (!request.cookies.get("sessionCartId")) {
                 const sessionCartId = crypto.randomUUID();
                 const newRequestHeaders = new Headers(request.headers);

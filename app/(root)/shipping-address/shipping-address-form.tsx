@@ -98,7 +98,6 @@ const ShippingAddressForm: FC<ShippingAddressFormProps> = ({ address }) => {
                                 id="city"
                                 aria-invalid={fieldState.invalid}
                                 placeholder="Enter city"
-                                autoComplete="off"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -115,7 +114,6 @@ const ShippingAddressForm: FC<ShippingAddressFormProps> = ({ address }) => {
                                 id="postalCode"
                                 aria-invalid={fieldState.invalid}
                                 placeholder="Enter postal code"
-                                autoComplete="off"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -132,7 +130,6 @@ const ShippingAddressForm: FC<ShippingAddressFormProps> = ({ address }) => {
                                 id="country"
                                 aria-invalid={fieldState.invalid}
                                 placeholder="Enter country"
-                                autoComplete="off"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
