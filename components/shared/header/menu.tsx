@@ -11,15 +11,22 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import UserButton from "./user-button";
+import { getMyCart } from "@/lib/features/cart/actions/cart.actions";
 
-const Menu = () => {
+const Menu = async () => {
+    const cart = await getMyCart();
+
     return (
         <div className="flex justify-end gap-3">
             <nav className="hidden md:flex w-full max-w-xs gap-1">
                 <ModeToggle />
                 <Button asChild variant="ghost">
                     <Link href="/cart">
-                        <ShoppingCart /> Cart
+                        <ShoppingCart />
+                        {cart && cart.items.length
+                            ? `(${cart?.items.reduce((acc, item) => acc + item.qty, 0)})`
+                            : ""}{" "}
+                        Cart
                     </Link>
                 </Button>
                 <UserButton />

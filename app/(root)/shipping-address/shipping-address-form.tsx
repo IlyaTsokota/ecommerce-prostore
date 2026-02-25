@@ -44,7 +44,6 @@ const ShippingAddressForm: FC<ShippingAddressFormProps> = ({ address }) => {
                 return;
             }
 
-            toast.success(response.message);
             router.push("/payment-method");
         });
     }
