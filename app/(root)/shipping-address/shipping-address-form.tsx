@@ -10,6 +10,8 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader } from "lucide-react";
+import { updateUserAddress } from "@/lib/features/user/actions/user.actions";
+import { toast } from "sonner";
 
 interface ShippingAddressFormProps {
     address?: ShippingAddress;
@@ -34,8 +36,17 @@ const ShippingAddressForm: FC<ShippingAddressFormProps> = ({ address }) => {
     });
 
     function onSubmit(data: ShippingAddress) {
-        // Do something with the form values.
-        console.log(data);
+        startTransition(async () => {
+            const response = await updateUserAddress(data);
+
+            if (!response.success) {
+                toast.error(response.message);
+                return;
+            }
+
+            router.push("/payment-method");
+            toast.success(response.message);
+        });
     }
 
     return (
