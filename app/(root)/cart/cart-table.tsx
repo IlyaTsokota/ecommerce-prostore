@@ -7,7 +7,6 @@ import { FC, useTransition } from "react";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -17,7 +16,9 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { addItemToCart, removeItemFormCart } from "@/lib/features/cart/actions/cart.actions";
 import { toast } from "sonner";
-import { Loader, Minus, Plus } from "lucide-react";
+import { ArrowRight, Loader, Minus, Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
 
 interface CartTableProps {
     cart: Cart | null;
@@ -119,6 +120,30 @@ const CartTable: FC<CartTableProps> = ({ cart }) => {
                             </TableBody>
                         </Table>
                     </div>
+                    <Card>
+                        <CardContent className="px-4 gap-4">
+                            <div className="pb-3 text-xl">
+                                Subtotal ({cart.items.reduce((acc, item) => acc + item.qty, 0)}):{" "}
+                                <span className="font-bold">{formatCurrency(cart.itemsPrice)}</span>
+                            </div>
+                            <Button
+                                className="w-full"
+                                disabled={isPending}
+                                onClick={() =>
+                                    startTransition(() => {
+                                        router.push("/shipping-address");
+                                    })
+                                }
+                            >
+                                {isPending ? (
+                                    <Loader className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <ArrowRight className="h-4 w-4" />
+                                )}{" "}
+                                Proceed to Checkout
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             )}
         </>
