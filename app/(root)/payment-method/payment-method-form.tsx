@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DEFAULT_PAYMENT_METHOD, PAYMENT_METHODS } from "@/lib/constants";
-import { PaymentMethodSchema } from "@/lib/features/checkout/schemas/checkout.schema";
+import { PaymentMethodSchema } from "@/lib/features/order/schemas/order.schema";
 import { updateUserPaymentMethod } from "@/lib/features/user/actions/user.actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader } from "lucide-react";

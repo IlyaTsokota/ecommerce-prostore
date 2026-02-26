@@ -5,7 +5,7 @@ import { ShippingAddress } from "../../cart/types/cart.types";
 import { formatError } from "@/lib/utils";
 import { auth } from "@/auth";
 import { ShippingAddressSchema } from "../../cart/schemas/cart.schemas";
-import { PaymentMethodSchema } from "../../checkout/schemas/checkout.schema";
+import { PaymentMethodSchema } from "../../order/schemas/order.schema";
 import z from "zod";
 
 export async function getUserById(id?: string) {
