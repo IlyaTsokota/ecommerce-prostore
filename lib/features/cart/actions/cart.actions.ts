@@ -31,6 +31,7 @@ const calcPrice = (items: CartItem[]) => {
 
 export async function getMyCart(): Promise<Cart | null> {
     const sessionCartId = await getSessionCartId();
+
     const session = await auth();
     const userId = session?.user?.id || undefined;
     const cart = await prisma.cart.findFirst({

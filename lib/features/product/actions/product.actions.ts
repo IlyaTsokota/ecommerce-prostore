@@ -18,8 +18,6 @@ export async function getLatestProducts(): Promise<Product[]> {
 }
 
 export const getProductBySlug = cache(async (slug: string): Promise<Product> => {
-    console.log("get slug");
-
     const data = await prisma.product.findUnique({
         where: {
             slug,
