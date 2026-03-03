@@ -15,13 +15,33 @@ import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
+import {
+    INSTANCE_LOADING_STATE,
+    OnApproveDataOneTimePayments,
+    PayPalOneTimePaymentButton,
+    PayPalProvider,
+    usePayPal,
+} from "@paypal/react-paypal-js/sdk-v6";
+import { approvePayPalOrder, createPayPalOrder } from "@/lib/features/order/actions/order.actions";
+import { toast } from "sonner";
 
 interface OrderDetailsTableProps {
     order: Order;
+    paypalClientId: string;
 }
 
-const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order }) => {
+const PrintLoadingState = () => {
+    const { loadingStatus } = usePayPal();
+
+    const isPending = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+    const isRejected = loadingStatus === INSTANCE_LOADING_STATE.REJECTED;
+
+    return isPending ? "Loading PayPal..." : isRejected ? "Error Loading PayPal" : "";
+};
+
+const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order, paypalClientId }) => {
     const {
+        id,
         shippingAddress,
         orderItems,
         itemsPrice,
@@ -132,6 +152,35 @@ const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order }) => {
                                 <div>Total</div>
                                 <div>{formatCurrency(totalPrice)}</div>
                             </div>
+
+                            {!isPaid && paymentMethod === "PayPal" && (
+                                <div>
+                                    <PayPalProvider clientId={paypalClientId}>
+                                        <PrintLoadingState />
+                                        <PayPalOneTimePaymentButton
+                                            presentationMode="auto"
+                                            createOrder={async () => {
+                                                const result = await createPayPalOrder(order.id);
+
+                                                if (!result.success) {
+                                                    toast.error(result.message);
+                                                }
+
+                                                return { orderId: result.data };
+                                            }}
+                                            onApprove={async (
+                                                data: OnApproveDataOneTimePayments,
+                                            ) => {
+                                                const res = await approvePayPalOrder(id, data);
+
+                                                toast[res.success ? "success" : "error"](
+                                                    res.message,
+                                                );
+                                            }}
+                                        />
+                                    </PayPalProvider>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

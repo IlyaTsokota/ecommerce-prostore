@@ -3,6 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import prettierPlugin from "eslint-plugin-prettier";
+import globals from "globals";
 
 const eslintConfig = defineConfig([
     ...nextVitals,
@@ -27,6 +28,18 @@ const eslintConfig = defineConfig([
                     tabWidth: 4,
                 },
             ],
+        },
+    },
+    {
+        files: ["**/*.js"],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+            },
+        },
+        rules: {
+            "no-unused-vars": "warn",
+            "no-undef": "warn",
         },
     },
     // Override default ignores of eslint-config-next.

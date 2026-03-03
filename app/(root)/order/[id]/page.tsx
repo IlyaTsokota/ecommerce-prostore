@@ -20,7 +20,7 @@ const OrderDetailsPage: FC<OrderDetailsPageProps> = async ({ params }) => {
         notFound();
     }
 
-    return <OrderDetailsTable order={order} />;
+    return <OrderDetailsTable order={order} paypalClientId={process.env.paypalClientId || "sb"} />;
 };
 
 export default OrderDetailsPage;
