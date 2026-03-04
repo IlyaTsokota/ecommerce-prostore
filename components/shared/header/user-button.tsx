@@ -8,6 +8,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOutUser } from "@/lib/features/auth/actions/auth.actions";
+import { Role } from "@/lib/generated/prisma/enums";
 import { UserIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -60,6 +61,13 @@ const UserButton = async () => {
                             Order History
                         </Link>
                     </DropdownMenuItem>
+                    {session?.user?.role === Role.ADMIN && (
+                        <DropdownMenuItem>
+                            <Link href="/admin/overview" className="w-full">
+                                Admin Dashboard
+                            </Link>
+                        </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem className="p-0 mb-1">
                         <form action={signOutUser} className="w-full">
                             <Button

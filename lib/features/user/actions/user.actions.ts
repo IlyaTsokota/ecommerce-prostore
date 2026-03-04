@@ -52,3 +52,19 @@ export async function updateUserPaymentMethod(data: z.infer<typeof PaymentMethod
         return { success: false, message: formatError(error) };
     }
 }
+
+export async function updateUserProfile({ email, name }: { email: string; name: string }) {
+    try {
+        const session = await auth();
+        const currentUser = await getUserById(session?.user?.id);
+
+        await prisma.user.update({
+            where: { id: currentUser.id },
+            data: { email, name },
+        });
+
+        return { success: true, message: "User updated successfully" };
+    } catch (err) {
+        return { success: false, message: formatError(error) };
+    }
+}
