@@ -11,7 +11,6 @@ describe("PayPal", () => {
     test("creates a paypal order", async () => {
         const price = "10.0";
         const response = await paypal.createOrder(price);
-        console.log(response);
 
         expect(response).toHaveProperty("id");
         expect(response).toHaveProperty("status");

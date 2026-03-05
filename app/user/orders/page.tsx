@@ -23,7 +23,6 @@ interface OrdersPageProps {
 
 const OrdersPage: FC<OrdersPageProps> = async ({ searchParams }) => {
     const { page } = await searchParams;
-
     const orders = await getMyOrders(Number(page) || 1);
 
     return (
@@ -64,7 +63,7 @@ const OrdersPage: FC<OrdersPageProps> = async ({ searchParams }) => {
                         ))}
                     </TableBody>
                 </Table>
-                {orders.totalPages >= 1 && (
+                {orders.totalPages > 1 && (
                     <Pagination page={Number(page) || 1} totalPages={orders?.totalPages} />
                 )}
             </div>

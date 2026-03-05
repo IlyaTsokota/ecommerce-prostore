@@ -14,7 +14,7 @@ import { Order } from "@/lib/features/order/types/order.types";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useTransition } from "react";
 import {
     INSTANCE_LOADING_STATE,
     OnApproveDataOneTimePayments,
@@ -22,12 +22,20 @@ import {
     PayPalProvider,
     usePayPal,
 } from "@paypal/react-paypal-js/sdk-v6";
-import { approvePayPalOrder, createPayPalOrder } from "@/lib/features/order/actions/order.actions";
+import {
+    approvePayPalOrder,
+    createPayPalOrder,
+    deliverOrder,
+    updateOrderToPaidCOD,
+} from "@/lib/features/order/actions/order.actions";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 interface OrderDetailsTableProps {
     order: Order;
     paypalClientId: string;
+    isAdmin: boolean;
 }
 
 const PrintLoadingState = () => {
@@ -39,7 +47,7 @@ const PrintLoadingState = () => {
     return isPending ? "Loading PayPal..." : isRejected ? "Error Loading PayPal" : "";
 };
 
-const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order, paypalClientId }) => {
+const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order, paypalClientId, isAdmin }) => {
     const {
         id,
         shippingAddress,
@@ -54,6 +62,48 @@ const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order, paypalClientId }
         isDelivered,
         deliveredAt,
     } = order;
+
+    const MarkAsPaidButton = () => {
+        const [isPending, startTransition] = useTransition();
+
+        return (
+            <Button
+                type="button"
+                disabled={isPending}
+                onClick={() =>
+                    startTransition(async () => {
+                        const res = await updateOrderToPaidCOD(order.id);
+
+                        toast[res.success ? "success" : "error"](res.message);
+                    })
+                }
+                className="cursor-pointer"
+            >
+                {isPending ? <Loader className="w-4 h-4 animate-spin" /> : "Mark As Paid"}
+            </Button>
+        );
+    };
+
+    const MarkAsDeliveredButton = () => {
+        const [isPending, startTransition] = useTransition();
+
+        return (
+            <Button
+                type="button"
+                disabled={isPending}
+                onClick={() =>
+                    startTransition(async () => {
+                        const res = await deliverOrder(order.id);
+
+                        toast[res.success ? "success" : "error"](res.message);
+                    })
+                }
+                className="cursor-pointer"
+            >
+                {isPending ? <Loader className="w-4 h-4 animate-spin" /> : "Mark As Delivered"}
+            </Button>
+        );
+    };
 
     return (
         <>
@@ -181,6 +231,12 @@ const OrderDetailsTable: FC<OrderDetailsTableProps> = ({ order, paypalClientId }
                                     </PayPalProvider>
                                 </div>
                             )}
+
+                            {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
+                                <MarkAsPaidButton />
+                            )}
+
+                            {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
                         </CardContent>
                     </Card>
                 </div>

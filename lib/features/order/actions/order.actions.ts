@@ -113,8 +113,6 @@ export async function createPayPalOrder(orderId: string) {
                 },
             });
 
-            console.log(paypalOrder);
-
             return {
                 success: true,
                 message: "Item order created successfully",
@@ -276,4 +274,66 @@ export async function getOrderSummary() {
         salesData,
         latestSales,
     };
+}
+
+export async function getAllOrders(
+    page: number,
+    limit = PAGE_SIZE,
+): Promise<{ data: Order[]; totalPages: number }> {
+    const data = await prisma.order.findMany({
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+        include: { user: { select: { name: true } } },
+    });
+
+    const dataCount = await prisma.order.count();
+
+    return {
+        data: convertToPlainObject(data),
+        totalPages: Math.ceil(dataCount / limit),
+    };
+}
+
+export async function deleteOrder(id: string) {
+    try {
+        await prisma.order.delete({ where: { id } });
+
+        revalidatePath("/admin/orders");
+
+        return { success: true, message: "Order deleted successfully" };
+    } catch (error) {
+        return { success: false, message: formatError(error) };
+    }
+}
+
+export async function updateOrderToPaidCOD(orderId: string) {
+    try {
+        await updateOrderToPaid({ orderId });
+
+        revalidatePath(`/order/${orderId}`);
+
+        return { success: true, message: "Order marked as paid" };
+    } catch (error) {
+        return { success: false, message: formatError(error) };
+    }
+}
+
+export async function deliverOrder(orderId: string) {
+    try {
+        const order = await prisma.order.findFirst({ where: { id: orderId } });
+        if (!order) throw new Error("Order not found");
+        if (!order.isPaid) throw new Error("Order is not paid");
+
+        await prisma.order.update({
+            where: { id: orderId },
+            data: { isDelivered: true, deliveredAt: new Date() },
+        });
+
+        revalidatePath(`/order/${orderId}`);
+
+        return { success: true, message: "Order has been marked delivered" };
+    } catch (error) {
+        return { success: false, message: formatError(error) };
+    }
 }

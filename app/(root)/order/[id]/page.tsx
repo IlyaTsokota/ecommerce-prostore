@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FC } from "react";
 import OrderDetailsTable from "./order-details-table";
+import { auth } from "@/auth";
+import { Role } from "@/lib/generated/prisma/enums";
 
 export const metadata: Metadata = {
     title: "Order Details",
@@ -20,7 +22,15 @@ const OrderDetailsPage: FC<OrderDetailsPageProps> = async ({ params }) => {
         notFound();
     }
 
-    return <OrderDetailsTable order={order} paypalClientId={process.env.paypalClientId || "sb"} />;
+    const session = await auth();
+
+    return (
+        <OrderDetailsTable
+            order={order}
+            paypalClientId={process.env.paypalClientId || "sb"}
+            isAdmin={session?.user?.role === Role.ADMIN}
+        />
+    );
 };
 
 export default OrderDetailsPage;

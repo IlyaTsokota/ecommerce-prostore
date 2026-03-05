@@ -7,7 +7,7 @@ const BaseProductSchema = z.object({
     category: z.string().min(3, "Category must be at least 3 characters"),
     brand: z.string().min(3, "Brand must be at least 3 characters"),
     description: z.string().min(3, "Description must be at least 3 characters"),
-    stock: z.coerce.number().int().nonnegative(),
+    stock: z.coerce.number<number>().int().nonnegative(),
     rating: z.number(),
     numReviews: z.number(),
     images: z.array(z.string()).min(1, "Product must have at least one image"),
@@ -18,11 +18,9 @@ const BaseProductSchema = z.object({
 
 export const CreateProductSchema = BaseProductSchema;
 
-export const UpdateProductSchema = BaseProductSchema.partial()
-    .strict()
-    .refine((data) => Object.keys(data).length > 0, {
-        message: "At least one field must be provided for update",
-    });
+export const UpdateProductSchema = BaseProductSchema.extend({
+    id: z.uuid().min(1, "Id is required"),
+});
 
 export const ResponseProductSchema = BaseProductSchema.extend({
     id: z.uuid(),
