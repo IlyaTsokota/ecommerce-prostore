@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import DeleteDialog from "@/components/shared/admin/delete-dialog";
+import DeleteDialog from "@/components/admin/delete-dialog";
 import { formatId } from "@/lib/utils";
 import { Role } from "@/lib/generated/prisma/enums";
 import { Badge } from "@/components/ui/badge";
@@ -23,18 +23,31 @@ export const metadata: Metadata = {
 };
 
 interface AdminUsersPageProps {
-    searchParams: Promise<{ page?: string }>;
+    searchParams: Promise<{ page: string; query: string }>;
 }
 
 const AdminUsersPage: FC<AdminUsersPageProps> = async ({ searchParams }) => {
     await requireAdmin();
 
-    const { page } = await searchParams;
-    const users = await getAllUsers(Number(page) || 1);
+    const { page = "1", query: searchText = "" } = await searchParams;
+    const users = await getAllUsers({ query: searchText, page: Number(page) || 0 });
 
     return (
         <div className="space-y-2">
-            <h2 className="h2-bold">users</h2>
+            <div className="flex items-center gap-3">
+                <h1 className="h2-bold">Users</h1>
+
+                {searchText && (
+                    <div>
+                        Filtered by <i>&quot;{searchText}&quot;</i>{" "}
+                        <Link href="/admin/users">
+                            <Button variant="outline" size="sm">
+                                Remove Filter
+                            </Button>
+                        </Link>
+                    </div>
+                )}
+            </div>
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>

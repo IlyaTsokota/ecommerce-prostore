@@ -60,6 +60,9 @@ export async function getAllProducts({
         },
         skip: (page - 1) * limit,
         take: limit,
+        where: {
+            OR: [{ name: { contains: query } }, { category: { contains: category } }],
+        },
     });
 
     const dataCount = await prisma.product.count();

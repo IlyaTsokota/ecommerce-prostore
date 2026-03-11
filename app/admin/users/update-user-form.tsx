@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Role } from "@/lib/generated/prisma/enums";
+import { updateUser } from "@/lib/features/user/actions/user.actions";
 
 interface UpdateUserForm {
     user: z.infer<typeof UpdateUserSchema>;
@@ -36,12 +37,13 @@ const UpdateUserForm: FC<UpdateUserForm> = ({ user }) => {
 
     function onSubmit(data: UpdateUserForm["user"]) {
         startTransition(async () => {
-            // const response = await updateUserAddress(data);
-            // if (!response.success) {
-            //     toast.error(response.message);
-            //     return;
-            // }
-            // router.push("/admin/users");
+            const response = await updateUser(data);
+            if (!response.success) {
+                toast.error(response.message);
+                return;
+            }
+            form.reset();
+            router.push("/admin/users");
         });
     }
 
@@ -54,6 +56,7 @@ const UpdateUserForm: FC<UpdateUserForm> = ({ user }) => {
                     <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                         <Input
+                            disabled
                             {...field}
                             id={field.name}
                             aria-invalid={fieldState.invalid}
@@ -85,14 +88,14 @@ const UpdateUserForm: FC<UpdateUserForm> = ({ user }) => {
                 render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor={field.name}>Role</FieldLabel>
-                        <Select>
+                        <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="w-45">
                                 <SelectValue placeholder="Select role" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value={Role.ADMIN}>Admin</SelectItem>
                                     <SelectItem value={Role.USER}>User</SelectItem>
+                                    <SelectItem value={Role.ADMIN}>Admin</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

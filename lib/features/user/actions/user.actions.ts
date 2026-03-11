@@ -9,6 +9,8 @@ import { PaymentMethodSchema } from "../../order/schemas/order.schema";
 import z from "zod";
 import { PAGE_SIZE } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
+import { UpdateUserSchema } from "../schemas/user.schema";
+import { Role } from "@/lib/generated/prisma/enums";
 
 export async function getUserById(id?: string) {
     const user = await prisma.user.findFirst({ where: { id } });
@@ -18,13 +20,37 @@ export async function getUserById(id?: string) {
     return user;
 }
 
-export async function getAllUsers(page: number, limit = PAGE_SIZE) {
+export async function getAllUsers({
+    page,
+    limit = PAGE_SIZE,
+    query,
+}: {
+    query: string;
+    page: number;
+    limit?: number;
+}) {
     const data = await prisma.user.findMany({
         orderBy: {
             createdAt: "desc",
         },
         skip: (page - 1) * limit,
         take: limit,
+        where: {
+            OR: [
+                {
+                    name: {
+                        contains: query,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    email: {
+                        contains: query,
+                        mode: "insensitive",
+                    },
+                },
+            ],
+        },
     });
 
     const dataCount = await prisma.user.count();
@@ -103,6 +129,19 @@ export async function deleteUser(id: string) {
         revalidatePath("/admin/users");
 
         return { success: true, message: "Product deleted successfully" };
+    } catch (error) {
+        return { success: false, message: formatError(error) };
+    }
+}
+
+export async function updateUser(user: z.infer<typeof UpdateUserSchema>) {
+    try {
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { name: user.name, role: user.role as Role },
+        });
+
+        return { success: true, message: "User updated successfully" };
     } catch (error) {
         return { success: false, message: formatError(error) };
     }

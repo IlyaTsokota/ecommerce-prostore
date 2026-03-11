@@ -14,25 +14,38 @@ import {
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import DeleteDialog from "@/components/shared/admin/delete-dialog";
+import DeleteDialog from "@/components/admin/delete-dialog";
 
 export const metadata: Metadata = {
     title: "Admin Orders",
 };
 
 interface AdminOrdersPageProps {
-    searchParams: Promise<{ page: string }>;
+    searchParams: Promise<{ page: string; query: string }>;
 }
 
 const AdminOrdersPage: FC<AdminOrdersPageProps> = async ({ searchParams }) => {
     await requireAdmin();
 
-    const { page } = await searchParams;
-    const orders = await getAllOrders(Number(page) || 1);
+    const { page = "1", query: searchText = "" } = await searchParams;
+    const orders = await getAllOrders({ query: searchText, page: Number(page) || 0 });
 
     return (
         <div className="space-y-2">
-            <h2 className="h2-bold">Orders</h2>
+            <div className="flex items-center gap-3">
+                <h1 className="h2-bold">Orders</h1>
+
+                {searchText && (
+                    <div>
+                        Filtered by <i>&quot;{searchText}&quot;</i>{" "}
+                        <Link href="/admin/orders">
+                            <Button variant="outline" size="sm">
+                                Remove Filter
+                            </Button>
+                        </Link>
+                    </div>
+                )}
+            </div>
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
