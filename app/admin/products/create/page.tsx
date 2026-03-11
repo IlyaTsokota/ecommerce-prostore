@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ProductForm from "./product-form";
+import ProductForm from "../product-form";
 
 export const metadata: Metadata = {
     title: "Create Product",

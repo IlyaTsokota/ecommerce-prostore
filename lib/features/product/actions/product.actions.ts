@@ -1,7 +1,7 @@
 "use server";
 
 import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from "../../../constants";
-import prisma from "../../../../db/prisma";
+import prisma from "@/db/prisma";
 import {
     CreateProductInput,
     Product,
@@ -27,6 +27,16 @@ export const getProductBySlug = cache(async (slug: string): Promise<Product> => 
     const data = await prisma.product.findUnique({
         where: {
             slug,
+        },
+    });
+
+    return convertToPlainObject(data);
+});
+
+export const getProductById = cache(async (id: string): Promise<Product> => {
+    const data = await prisma.product.findUnique({
+        where: {
+            id,
         },
     });
 
@@ -106,11 +116,11 @@ export async function updateProduct(data: UpdateProductInput) {
 
         if (!productExists) throw new Error("Product not found");
 
-        await prisma.product.create({ data: product });
+        await prisma.product.update({ where: { id: product.id }, data: product });
 
         revalidatePath("/admin/products");
 
-        return { success: true, message: "Product created successfully" };
+        return { success: true, message: "Product updated successfully" };
     } catch (error) {
         return { success: false, message: formatError(error) };
     }

@@ -7,6 +7,8 @@ import { auth } from "@/auth";
 import { ShippingAddressSchema } from "../../cart/schemas/cart.schemas";
 import { PaymentMethodSchema } from "../../order/schemas/order.schema";
 import z from "zod";
+import { PAGE_SIZE } from "@/lib/constants";
+import { revalidatePath } from "next/cache";
 
 export async function getUserById(id?: string) {
     const user = await prisma.user.findFirst({ where: { id } });
@@ -14,6 +16,23 @@ export async function getUserById(id?: string) {
     if (!user) throw new Error("User not found");
 
     return user;
+}
+
+export async function getAllUsers(page: number, limit = PAGE_SIZE) {
+    const data = await prisma.user.findMany({
+        orderBy: {
+            createdAt: "desc",
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+    });
+
+    const dataCount = await prisma.user.count();
+
+    return {
+        data,
+        totalPages: Math.ceil(dataCount / limit),
+    };
 }
 
 export async function updateUserAddress(data: ShippingAddress) {
@@ -64,6 +83,26 @@ export async function updateUserProfile({ email, name }: { email: string; name: 
         });
 
         return { success: true, message: "User updated successfully" };
+    } catch (error) {
+        return { success: false, message: formatError(error) };
+    }
+}
+
+export async function deleteUser(id: string) {
+    try {
+        const userExists = await prisma.user.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!userExists) throw new Error("User not found");
+
+        await prisma.user.delete({ where: { id } });
+
+        revalidatePath("/admin/users");
+
+        return { success: true, message: "Product deleted successfully" };
     } catch (error) {
         return { success: false, message: formatError(error) };
     }

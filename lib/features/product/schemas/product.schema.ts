@@ -8,7 +8,7 @@ const BaseProductSchema = z.object({
     brand: z.string().min(3, "Brand must be at least 3 characters"),
     description: z.string().min(3, "Description must be at least 3 characters"),
     stock: z.coerce.number<number>().int().nonnegative(),
-    rating: z.number(),
+    rating: z.coerce.number<number>().nonnegative(),
     numReviews: z.number(),
     images: z.array(z.string()).min(1, "Product must have at least one image"),
     isFeatured: z.boolean(),

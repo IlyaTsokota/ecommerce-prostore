@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldContent, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -73,6 +74,8 @@ const ProductForm: FC<ProductFormProps> = ({ type, product }) => {
         mode: "onChange",
     });
     const images = useWatch({ control: form.control, name: "images" });
+    const banner = useWatch({ control: form.control, name: "banner" });
+    const isFeatured = useWatch({ control: form.control, name: "isFeatured" });
 
     async function onSubmit(data: CreateProductInput | UpdateProductInput) {
         if (isCreateForm(data, type)) {
@@ -221,6 +224,61 @@ const ProductForm: FC<ProductFormProps> = ({ type, product }) => {
                     )}
                 />
             </div>
+            <div className="upload-field">
+                Featured Product
+                <Card className="mt-2">
+                    <CardContent className="space-y-2">
+                        <Controller
+                            name="isFeatured"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <div className="flex">
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            id={field.name}
+                                        />
+                                        <FieldLabel htmlFor={field.name} className="pl-2">
+                                            Is Featured?
+                                        </FieldLabel>
+                                    </div>
+
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+                        {isFeatured && banner && (
+                            <Image
+                                src={banner}
+                                alt="banner image"
+                                className="w-full object-cover rounded-sm"
+                                width={1920}
+                                height={680}
+                            />
+                        )}
+
+                        {isFeatured && !banner && (
+                            <UploadButton
+                                endpoint="imageUploader"
+                                onUploadBegin={() => setUploadImage(true)}
+                                onClientUploadComplete={(res) => {
+                                    form.setValue("banner", res[0].ufsUrl, {
+                                        shouldValidate: true,
+                                    });
+                                    setUploadImage(false);
+                                }}
+                                onUploadError={(error: Error) => {
+                                    toast.error(error.message);
+                                }}
+                            />
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
             <div className="upload-field flex-col flex gap-5 md:flex-row">
                 <Controller
                     name="description"
@@ -304,7 +362,6 @@ const ProductForm: FC<ProductFormProps> = ({ type, product }) => {
                     )}
                 />
             </div>
-            <div></div>
             <div>
                 <Button
                     type="submit"
